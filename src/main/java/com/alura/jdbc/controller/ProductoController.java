@@ -1,6 +1,6 @@
 package com.alura.jdbc.controller;
 
-import com.alura.jdbc.view.CreaConexion;
+import com.alura.jdbc.factory.ConnectionFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class ProductoController {
 	}
 
 	public List<Map<String,String>> listar() throws SQLException {
-		Connection con = CreaConexion.recuperarConexion();
+		Connection con = ConnectionFactory.recuperarConexion();
 
 		//Los objetos Statement son los encargados de ejecutar las querys de nuestras base de datos, para
 		// crearlos no es necesario instanciasrlos, pero si es necesario crarlo a partir de un objeto Connection
@@ -43,8 +43,22 @@ public class ProductoController {
 		return resultados;
 	}
 
-    public void guardar(Object producto) {
-		// TODO
+    public void guardar(Map<String ,String> producto) throws SQLException {
+		Connection con = ConnectionFactory.recuperarConexion();
+
+		Statement statement = con.createStatement();
+		statement.execute("INSERT INTO producto(nombre,descripcion,cantidad) " +
+								"VALUES('"+producto.get("NOMBRE")+"','"
+								+producto.get("DESCRIPCION")+"',"
+								+producto.get("CANTIDAD")+");"
+				//Este metodo estatico de la clase statement nos permite obtener el id de una consulta cuando se insertan valores a una tabla
+				,statement.RETURN_GENERATED_KEYS);
+
+		ResultSet resultSet = statement.getGeneratedKeys();
+		while (resultSet.next()){
+			System.out.println(String.format("Fue insertado el producto de ID %d",
+			resultSet.getInt(1)));
+		}
 	}
 
 }
