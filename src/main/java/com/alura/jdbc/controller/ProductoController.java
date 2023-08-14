@@ -1,7 +1,12 @@
 package com.alura.jdbc.controller;
 
+import com.alura.jdbc.view.CreaConexion;
+
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductoController {
 
@@ -13,9 +18,29 @@ public class ProductoController {
 		// TODO
 	}
 
-	public List<?> listar() {
-		// TODO
-		return new ArrayList<>();
+	public List<Map<String,String>> listar() throws SQLException {
+		Connection con = CreaConexion.recuperarConexion();
+
+		//Los objetos Statement son los encargados de ejecutar las querys de nuestras base de datos, para
+		// crearlos no es necesario instanciasrlos, pero si es necesario crarlo a partir de un objeto Connection
+		Statement statement = con.createStatement();
+		//Ejecucion del quiery
+		boolean result = statement.execute("SELECT * FROM producto");
+		//El objeto resultSet es el encargado de recibir el resulta de la query en la db, con este podremos obtener los strings de el resultado
+		ResultSet resultSet = statement.getResultSet();
+
+		//Creamos una lista que nos reciba el resultdo de la quuery en una forma en la que pueda ser manipulado y retornado para mostar en la app
+		List<Map<String,String>> resultados = new ArrayList<>();
+		while (resultSet.next()){
+			Map<String,String> fila = new HashMap<>();
+			fila.put("ID", String.valueOf(resultSet.getInt("id")));
+			fila.put("NOMBRE", resultSet.getString("nombre"));
+			fila.put("DESCRIPCION", resultSet.getString("descripcion"));
+			fila.put("CANTIDAD", String.valueOf(resultSet.getInt("cantidad")));
+			resultados.add(fila);
+		}
+		con.close();
+		return resultados;
 	}
 
     public void guardar(Object producto) {
