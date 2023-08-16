@@ -10,12 +10,26 @@ import java.util.Map;
 
 public class ProductoController {
 
-	public void modificar(String nombre, String descripcion, Integer id) {
-		// TODO
+	public int modificar(String nombre, String descripcion, Integer id,Integer cantidad) throws SQLException {
+		Connection con = ConnectionFactory.recuperarConexion();
+
+		Statement statement = con.createStatement();
+		String query = "UPDATE producto SET nombre ='"+nombre+"' , descripcion = '"+ descripcion+ "', cantidad = "+ cantidad + " WHERE id ="+ id + " ;";
+		System.out.println(query);
+		statement.execute(query);
+		int updateCount = statement.getUpdateCount();
+		con.close();
+		return updateCount;
 	}
 
-	public void eliminar(Integer id) {
-		// TODO
+	public int eliminar(Integer id) throws SQLException {
+		Connection con = ConnectionFactory.recuperarConexion();
+
+		Statement statement = con.createStatement();
+		statement.execute("DELETE FROM producto WHERE id="+id);
+
+		//Este metodo retorna cuantos registros fuern modificados en la base de datos
+		return statement.getUpdateCount();
 	}
 
 	public List<Map<String,String>> listar() throws SQLException {
