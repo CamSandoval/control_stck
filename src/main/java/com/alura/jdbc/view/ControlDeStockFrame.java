@@ -65,9 +65,9 @@ public class ControlDeStockFrame extends JFrame {
         botonEliminar = new JButton("Eliminar");
         botonModificar = new JButton("Modificar");
         botonReporte = new JButton("Ver Reporte");
-        botonEliminar.setBounds(10, 500, 80, 20);
-        botonModificar.setBounds(100, 500, 80, 20);
-        botonReporte.setBounds(190, 500, 80, 20);
+        botonEliminar.setBounds(10, 500, 150, 25);
+        botonModificar.setBounds(180, 500, 150, 25);
+        botonReporte.setBounds(350, 500, 150, 25);
 
         container.add(tabla);
         container.add(botonEliminar);
@@ -111,8 +111,9 @@ public class ControlDeStockFrame extends JFrame {
 
         botonGuardar = new JButton("Guardar");
         botonLimpiar = new JButton("Limpiar");
-        botonGuardar.setBounds(10, 175, 80, 20);
-        botonLimpiar.setBounds(100, 175, 80, 20);
+        botonGuardar.setBounds(10, 175, 150, 25);
+        botonLimpiar.setBounds(180, 175, 150, 25);
+
 
         container.add(labelNombre);
         container.add(labelDescripcion);
@@ -196,7 +197,7 @@ public class ControlDeStockFrame extends JFrame {
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
-                        JOptionPane.showInputDialog(this, String.format("%d intem modificado con éxito", filasModifiadas));
+                        JOptionPane.showMessageDialog(this, String.format("%d intem modificado con éxito", filasModifiadas));
                     }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
         }
     }
