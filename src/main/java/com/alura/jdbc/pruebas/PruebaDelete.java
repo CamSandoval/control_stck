@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class PruebaDelete {
     public static void main(String[] args) throws SQLException {
-        Connection con = ConnectionFactory.recuperarConexion();
+        Connection con = new ConnectionFactory().recuperarConexion();
 
         Statement statement = con.createStatement();
         statement.execute("DELETE FROM producto WHERE id=99");

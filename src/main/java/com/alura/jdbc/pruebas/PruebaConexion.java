@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class PruebaConexion {
 
     public static void main(String[] args) throws SQLException {
-        Connection con = ConnectionFactory.recuperarConexion();
+        Connection con = new ConnectionFactory().recuperarConexion();
 
         System.out.println("Cerrando la conexión");
 

@@ -1,6 +1,7 @@
 package com.alura.jdbc.controller;
 
 import com.alura.jdbc.factory.ConnectionFactory;
+import com.alura.jdbc.modelo.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class ProductoController {
 
 	public int modificar(String nombre, String descripcion, Integer id,Integer cantidad) throws SQLException {
-		final Connection con = ConnectionFactory.recuperarConexion();
+		final Connection con = new ConnectionFactory().recuperarConexion();
 
 		try(con){
 			final PreparedStatement statement = con.prepareStatement("UPDATE producto SET nombre = ? , descripcion = ? "+
@@ -32,7 +33,7 @@ public class ProductoController {
 	}
 
 	public int eliminar(Integer id) throws SQLException {
-		final Connection con = ConnectionFactory.recuperarConexion();
+		final Connection con = new ConnectionFactory().recuperarConexion();
 
 		try (con) {
 			final PreparedStatement statement = con.prepareStatement("DELETE FROM producto WHERE id= ?");
@@ -48,7 +49,7 @@ public class ProductoController {
 	}
 
 	public List<Map<String,String>> listar() throws SQLException {
-		final Connection con = ConnectionFactory.recuperarConexion();
+		final Connection con = new ConnectionFactory().recuperarConexion();
 
 		try(con) {
 			//Los objetos Statement son los encargados de ejecutar las querys de nuestras base de datos, para
@@ -77,13 +78,9 @@ public class ProductoController {
 		}
 	}
 
-    public void guardar(Map<String ,String> producto) throws SQLException {
-		String nombre = producto.get("NOMBRE");
-		String descripcion = producto.get("DESCRIPCION");
-		int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
-		int maximoCantidad = 50;
+    public void guardar(Producto producto) throws SQLException {
 
-		Connection con = ConnectionFactory.recuperarConexion();
+		Connection con = new ConnectionFactory().recuperarConexion();
 
 		//Agregamos la opcion de try with resources para que no sea necesario realizar los cierres de la conexion y el statement
 		try(con){
@@ -95,12 +92,7 @@ public class ProductoController {
 					,Statement.RETURN_GENERATED_KEYS);
 
 			try(statement){
-				do{
-					int cantidadParaGuardar = Math.min(cantidad,maximoCantidad);
-					ejecutarRegistro(nombre, descripcion, cantidadParaGuardar, statement);
-					cantidad -= maximoCantidad;
-				}while (cantidad > 0);
-
+				ejecutarRegistro(producto, statement);
 				System.out.println("Commit");
 				//Si todas las ejecuciones anteriores salen bien, con el metodo commit confirmamos que estos cambios srean permannetes
 				con.commit();
@@ -115,20 +107,20 @@ public class ProductoController {
 			//con.close();
 	}
 
-	private void ejecutarRegistro(String nombre, String descripcion, Integer cantidad, PreparedStatement statement) throws SQLException {
+	private void ejecutarRegistro(Producto producto, PreparedStatement statement) throws SQLException {
 
 
-		statement.setString(1, nombre);
-		statement.setString(2, descripcion);
-		statement.setInt(3, cantidad);
+		statement.setString(1, producto.getNombre());
+		statement.setString(2, producto.getDescripcion());
+		statement.setInt(3, producto.getCantidad());
 
 		statement.execute();
 
 		final ResultSet resultSet = statement.getGeneratedKeys();
 		try(resultSet){
 			while (resultSet.next()){
-				System.out.printf("Fue insertado el producto de ID %d%n",
-						resultSet.getInt(1));
+				producto.setId(resultSet.getInt(1));
+				System.out.printf("Fue insertado el producto de ID %s",producto);
 			}
 		}
 	}

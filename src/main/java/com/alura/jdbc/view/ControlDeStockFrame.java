@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
+import com.alura.jdbc.modelo.Producto;
 
 public class ControlDeStockFrame extends JFrame {
 
@@ -197,7 +198,7 @@ public class ControlDeStockFrame extends JFrame {
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
-                        JOptionPane.showMessageDialog(this, String.format("%d intem modificado con éxito", filasModifiadas));
+                        JOptionPane.showMessageDialog(this, String.format("%d item modificado con éxito", filasModifiadas));
                     }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
         }
     }
@@ -255,10 +256,7 @@ public class ControlDeStockFrame extends JFrame {
         }
 
         // Asignamos los valores de el producto a insertar
-        var producto = new HashMap<String,String>();
-        producto.put("NOMBRE",textoNombre.getText());
-        producto.put("DESCRIPCION", textoDescripcion.getText());
-        producto.put("CANTIDAD",String.valueOf(cantidadInt));
+        var producto = new Producto(textoNombre.getText(),textoDescripcion.getText(),cantidadInt);
         var categoria = comboCategoria.getSelectedItem();
         try{
             this.productoController.guardar(producto);
