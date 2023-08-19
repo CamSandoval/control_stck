@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 public class ConnectionFactory {
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public ConnectionFactory(){
         var pooledDataSource = new ComboPooledDataSource();
@@ -18,7 +18,12 @@ public class ConnectionFactory {
 
         this.dataSource = pooledDataSource;
     }
-    public Connection recuperarConexion() throws SQLException {
-        return this.dataSource.getConnection();
+    public Connection recuperarConexion() {
+        try{
+            return this.dataSource.getConnection();
+        }catch (SQLException e){
+            System.out.println("No se pudo realizar la conexión principal");
+            throw new RuntimeException(e);
+        }
     }
 }
