@@ -54,8 +54,8 @@ public class ProductoDAO {
         try{
             //con.setAutoCommit(false);
 
-            final PreparedStatement statement = con.prepareStatement("INSERT INTO producto(nombre,descripcion,cantidad) " +
-                            "VALUES (?, ?, ?)"
+            final PreparedStatement statement = con.prepareStatement("INSERT INTO producto(nombre,descripcion,cantidad,categoria_id) " +
+                            "VALUES (?, ?, ?,?)"
                     //Este metodo estatico de la clase statement nos permite obtener el id de una consulta cuando se insertan valores a una tabla
                     , Statement.RETURN_GENERATED_KEYS);
 
@@ -83,6 +83,7 @@ public class ProductoDAO {
         statement.setString(1, producto.getNombre());
         statement.setString(2, producto.getDescripcion());
         statement.setInt(3, producto.getCantidad());
+        statement.setInt(4,producto.getCategoriaId());
 
         statement.execute();
 
@@ -107,6 +108,34 @@ public class ProductoDAO {
                 //Ejecucion del quiery
                 statement.execute();
                 //El objeto resultSet es el encargado de recibir el resulta de la query en la db, con este podremos obtener los strings de el resultado
+                final ResultSet resultSet = statement.getResultSet();
+
+                try(resultSet){
+                    while (resultSet.next()) {
+                        resultados.add(new Producto(
+                                resultSet.getInt("id"),
+                                resultSet.getString("nombre"),
+                                resultSet.getString("descripcion"),
+                                resultSet.getInt("cantidad")));
+                    }
+                }
+            }
+            //con.close();
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return resultados;
+    }
+
+    public List<Producto> listar(Integer categoriaId) {
+        List<Producto> resultados = new ArrayList<>();
+        try{
+            final PreparedStatement statement = con.prepareStatement("SELECT id , nombre , descripcion , cantidad FROM producto" +
+                    " WHERE categoria_id = ? ;");
+            try(statement) {
+                //Ejecucion del quiery
+                statement.setInt(1,categoriaId);
+                statement.execute();
                 final ResultSet resultSet = statement.getResultSet();
 
                 try(resultSet){
